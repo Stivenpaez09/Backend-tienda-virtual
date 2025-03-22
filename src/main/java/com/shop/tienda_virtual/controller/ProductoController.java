@@ -37,7 +37,7 @@ public class ProductoController {
     }
 
     @DeleteMapping ("/productos/eliminar/{codigo_producto}")
-    public ResponseEntity<String> eliminarProducto(@PathVariable("codigo_producto") Long codigo_producto) {
+    public ResponseEntity<String> deleteProducto(@PathVariable("codigo_producto") Long codigo_producto) {
         productoService.deleteProducto(codigo_producto);
         return ResponseEntity.ok("Producto eliminado con exito");
     }
@@ -46,5 +46,10 @@ public class ProductoController {
     public ResponseEntity<String> updateProducto(@RequestBody Producto producto, @PathVariable("codigo_producto") Long codigo_producto) {
         productoService.updateProducto(producto, codigo_producto);
         return ResponseEntity.ok("Producto editado con exito");
+    }
+
+    @GetMapping ("/productos/falta_stock")
+    public ResponseEntity<List<Producto>> missingProductos() {
+        return  ResponseEntity.ok(productoService.getProductos());
     }
 }

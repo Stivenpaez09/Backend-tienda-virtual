@@ -10,4 +10,5 @@ public interface IProductoService {
     public Producto findProducto(Long id_producto);
     public void updateProducto(Producto producto,  Long id_producto);
     public void deleteProducto(Long id_producto);
+    public List<Producto> missingProductos();
 }

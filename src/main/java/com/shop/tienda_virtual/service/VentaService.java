@@ -53,7 +53,7 @@ public class VentaService implements IVentaService{
         this.findCliente(venta.getUnCliente().getId_cliente());
 
         venta.getListaProductos().forEach(p -> {
-            if (!this.productoDisponible(p.getCodigo_producto())) {
+            if (!this.avalaibleProductos(p.getCodigo_producto())) {
                 throw new EntidadInvalidaException("El producto " + p.getNombre() + " no esta disponible.");
             }
         });
@@ -97,8 +97,9 @@ public class VentaService implements IVentaService{
         return clienteRepo.findById(id_cliente).orElseThrow(() -> new EntityNotFoundException("El cliente con ID " + id_cliente + " no fue encontrado en la base de datos"));
     }
 
+    //Metodo para verificar si el producto esta disponible y descontarlo en caso de ser posible
     @Override
-    public boolean productoDisponible(Long codigo_producto) {
+    public boolean avalaibleProductos(Long codigo_producto) {
         Producto producto = productoRepo.findById(codigo_producto).orElseThrow(() -> new EntityNotFoundException("El producto con ID " + codigo_producto + " no fue encontrado en la base de datos"));
 
         if (producto.getCantidad_disponible()> 0){
@@ -109,6 +110,12 @@ public class VentaService implements IVentaService{
         return false;
     }
 
+    //Metodo que devuelve los productos de una venta en particular
+    @Override
+    public List<Producto> findProductosVenta(Long codigo_venta) {
+        Venta venta = this.findVenta(codigo_venta);
+        return venta.getListaProductos();
+    }
 
 
 }

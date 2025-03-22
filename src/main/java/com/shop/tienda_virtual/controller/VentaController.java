@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.controller;
 
+import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
 import com.shop.tienda_virtual.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class VentaController {
     }
 
     @PostMapping ("/ventas/crear")
-    public ResponseEntity<String> crearVenta(@RequestBody Venta venta) {
+    public ResponseEntity<String> createVenta(@RequestBody Venta venta) {
         ventaService.createVenta(venta);
         return ResponseEntity.status(HttpStatus.CREATED).body("Venta creada con exito");
     }
@@ -43,6 +44,12 @@ public class VentaController {
 
     @PutMapping ("/ventas/editar/{codigo_venta}")
     public ResponseEntity<String> updateVenta(@PathVariable Long codigo_venta, @RequestBody Venta venta) {
+        ventaService.updateVenta(codigo_venta, venta);
+        return ResponseEntity.ok("Venta editada con exito");
+    }
 
+    @GetMapping ("/ventas/productos/{codigo_venta}")
+    public ResponseEntity<List<Producto>> findProductosVenta(@PathVariable Long codigo_venta) {
+        return ResponseEntity.ok(ventaService.findProductosVenta(codigo_venta));
     }
 }

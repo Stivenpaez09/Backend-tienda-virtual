@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,4 +76,19 @@ public class ProductoService implements IProductoService{
         this.findProducto(id_producto);
         productoRepo.deleteById(id_producto);
     }
+
+    //Metodo que busca los productos que tengan menor cantidad a 5
+    @Override
+    public List<Producto> missingProductos() {
+        List<Producto> faltantes = new ArrayList<>();
+        this.getProductos().forEach(producto -> {
+            if (producto.getCantidad_disponible() < 5) {
+                faltantes.add(producto);
+            }
+        });
+
+        return faltantes;
+    }
+
+
 }
