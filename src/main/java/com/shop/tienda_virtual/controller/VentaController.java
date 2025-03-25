@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.controller;
 
+import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
 import com.shop.tienda_virtual.service.VentaService;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -51,5 +53,17 @@ public class VentaController {
     @GetMapping ("/ventas/productos/{codigo_venta}")
     public ResponseEntity<List<Producto>> findProductosVenta(@PathVariable Long codigo_venta) {
         return ResponseEntity.ok(ventaService.findProductosVenta(codigo_venta));
+    }
+
+    @GetMapping ("/ventas/{fecha_venta}")
+    public ResponseEntity <String>  findVentasByDate(@PathVariable LocalDate fecha_venta) {
+        return ResponseEntity.ok("El dia "+ fecha_venta.toString() +
+                " tuvo un total de : " + ventaService.findVentasByDate(fecha_venta).indexOf(0) +
+                " ventas y el dinero total recaudado fue: " + ventaService.findVentasByDate(fecha_venta).indexOf(1));
+    }
+
+    @GetMapping ("/ventas/mayor_venta")
+    public ResponseEntity<BiggestVentaDTO> findBiggestVenta() {
+        return ResponseEntity.ok(ventaService.findBiggestVenta());
     }
 }

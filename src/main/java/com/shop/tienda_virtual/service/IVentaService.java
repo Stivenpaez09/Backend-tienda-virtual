@@ -1,9 +1,12 @@
 package com.shop.tienda_virtual.service;
 
+import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.model.Cliente;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IVentaService{
@@ -15,4 +18,6 @@ public interface IVentaService{
     public Cliente findCliente(Long id_cliente);
     public boolean avalaibleProductos(Long codigo_producto);
     public List<Producto> findProductosVenta(Long codigo_venta);
+    public List<Object> findVentasByDate(LocalDate fecha_venta);
+    public BiggestVentaDTO findBiggestVenta();
 }

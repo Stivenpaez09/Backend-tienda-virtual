@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.service;
 
+import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Cliente;
 import com.shop.tienda_virtual.model.Producto;
@@ -11,8 +12,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -115,6 +119,41 @@ public class VentaService implements IVentaService{
     public List<Producto> findProductosVenta(Long codigo_venta) {
         Venta venta = this.findVenta(codigo_venta);
         return venta.getListaProductos();
+    }
+
+    @Override
+    public List<Object> findVentasByDate(LocalDate fecha_venta) {
+
+        if (fecha_venta == null){
+            throw new EntidadInvalidaException("La fecha de venta no puede ser nula.");
+        }
+
+        if (fecha_venta.isAfter(LocalDate.now())) {
+            throw new EntidadInvalidaException("La fecha de venta no puede ser futura.");
+        }
+
+        double totalDinero = this.getVentas().stream()
+                .filter(v -> fecha_venta.equals(v.getFecha_venta()))
+                .mapToDouble(Venta::getTotal)
+                .sum();
+
+        long totalVentas = this.getVentas().stream()
+                .filter(v -> fecha_venta.equals(v.getFecha_venta()))
+                .count();
+
+        return List.of(totalDinero, totalVentas);
+    }
+
+    @Override
+    public BiggestVentaDTO findBiggestVenta() {
+        Venta venta = this.getVentas().stream().max(Comparator.comparing(Venta::getFecha_venta)).orElse(null);
+        BiggestVentaDTO biggestVentaDTO = new BiggestVentaDTO();
+        biggestVentaDTO.setCodigo_venta(venta.getCodigo_venta());
+        biggestVentaDTO.setTotal(venta.getTotal());
+        biggestVentaDTO.setListaProductos(venta.getListaProductos().size());
+        biggestVentaDTO.setNombreCliente(venta.getUnCliente().getNombre());
+        biggestVentaDTO.setApellidoCliente(venta.getUnCliente().getApellido());
+        return biggestVentaDTO;
     }
 
 
