@@ -1,6 +1,7 @@
 package com.shop.tienda_virtual.controller;
 
 import com.shop.tienda_virtual.dto.BiggestVentaDTO;
+import com.shop.tienda_virtual.dto.VentaUpdateDTO;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
 import com.shop.tienda_virtual.service.VentaService;
@@ -48,6 +49,24 @@ public class VentaController {
     public ResponseEntity<String> updateVenta(@PathVariable Long codigo_venta, @RequestBody Venta venta) {
         ventaService.updateVenta(codigo_venta, venta);
         return ResponseEntity.ok("Venta editada con exito");
+    }
+
+    @PatchMapping("/ventas/editar/fechaventa/{codigo_venta}")
+    public ResponseEntity<String> updateFechaVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
+        ventaService.updateFechaVenta(codigo_venta, ventaUpdateDTO);
+        return ResponseEntity.ok("Fecha de venta editada con exito");
+    }
+
+    @PatchMapping("/ventas/editar/listaproductos/{codigo_venta}")
+    public ResponseEntity<String> updateListaProductosVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
+        this.ventaService.updateListaProductosVenta(codigo_venta, ventaUpdateDTO);
+        return ResponseEntity.ok("Lista de productos editada con exito");
+    }
+
+    @PatchMapping("/ventas/editar/cliente/{codigo_venta}")
+    public ResponseEntity<String> updateClienteVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
+        this.ventaService.updateClienteVenta(codigo_venta, ventaUpdateDTO);
+        return ResponseEntity.ok("Cliente editado con exito");
     }
 
     @GetMapping ("/ventas/productos/{codigo_venta}")

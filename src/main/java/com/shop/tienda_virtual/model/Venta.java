@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,14 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SequenceGenerator(name = "venta_seq", sequenceName = "venta_seq", allocationSize = 1)
-public class Venta {
+public class Venta implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "venta_seq")
     private Long codigo_venta;
     private LocalDate fecha_venta;
     private Double total;
     @OneToMany
-    private List<Producto> ListaProductos;
+    private List<Producto> listaProductos;
     @OneToOne
     @JoinColumn (name = "id_cliente",
                  referencedColumnName = "id_cliente")

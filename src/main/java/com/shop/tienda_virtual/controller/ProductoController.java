@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.controller;
 
+import com.shop.tienda_virtual.dto.ProductoUpdateDTO;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,30 @@ public class ProductoController {
     public ResponseEntity<String> updateProducto(@RequestBody Producto producto, @PathVariable("codigo_producto") Long codigo_producto) {
         productoService.updateProducto(producto, codigo_producto);
         return ResponseEntity.ok("Producto editado con exito");
+    }
+
+    @PatchMapping("/productos/editar/nombre/{codigo_producto}")
+    public ResponseEntity<String> updateNombreProducto(@PathVariable("codigo_producto") Long codigo_producto, @RequestBody ProductoUpdateDTO productoUpdateDTO) {
+        productoService.updateNombreProducto(codigo_producto, productoUpdateDTO);
+        return ResponseEntity.ok("Nombre de producto editado con exito");
+    }
+
+    @PatchMapping("/productos/editar/marca/{codigo_producto}")
+    public ResponseEntity<String> updateMarcaProducto(@PathVariable("codigo_producto") Long codigo_producto, @RequestBody ProductoUpdateDTO productoUpdateDTO) {
+        productoService.updateMarcaProducto(codigo_producto, productoUpdateDTO);
+        return ResponseEntity.ok("Marca de producto editado con exito");
+    }
+
+    @PatchMapping("/productos/editar/costo/{codigo_producto}")
+    public ResponseEntity<String> updateCostoProducto(@PathVariable("codigo_producto") Long codigo_producto, @RequestBody ProductoUpdateDTO productoUpdateDTO) {
+        productoService.updateCostoProducto(codigo_producto, productoUpdateDTO);
+        return ResponseEntity.ok("Costo de producto editado con exito");
+    }
+
+    @PatchMapping("/productos/editar/cantidad_disponible/{codigo_producto}")
+    public ResponseEntity<String> updateCantidadDisponibleProducto(@PathVariable("codigo_producto") Long codigo_producto, @RequestBody ProductoUpdateDTO productoUpdateDTO) {
+        productoService.updateCantidadDisponibleProducto(codigo_producto, productoUpdateDTO);
+        return ResponseEntity.ok("Cantidad disponible de producto editado con exito");
     }
 
     @GetMapping ("/productos/falta_stock")

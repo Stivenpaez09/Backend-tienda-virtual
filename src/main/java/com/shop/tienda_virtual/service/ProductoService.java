@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.service;
 
+import com.shop.tienda_virtual.dto.ProductoUpdateDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.repository.IProductoRepository;
@@ -22,7 +23,7 @@ public class ProductoService implements IProductoService{
         this.productoRepo = productoRepo;
     }
 
-
+    //metodo para crear un producto
     @Override
     @Transactional
     public void createProducto(Producto producto) {
@@ -49,17 +50,20 @@ public class ProductoService implements IProductoService{
         productoRepo.saveAndFlush(producto);
     }
 
+    //metodo para obtener una lista de productos
     @Override
     public List<Producto> getProductos() {
         return productoRepo.findAll();
     }
 
+    //metodo para encontrar un producto en específico
     @Override
     public Producto findProducto(Long codigo_producto) {
 
         return productoRepo.findById(codigo_producto).orElseThrow(() -> new EntityNotFoundException("El usuario con ID " + codigo_producto + " no existe en la base de datos"));
     }
 
+    //metodo para actualizar un producto completo
     @Override
     @Transactional
     public void updateProducto(Producto producto, Long codigo_producto) {
@@ -70,6 +74,66 @@ public class ProductoService implements IProductoService{
         this.createProducto(producto);
     }
 
+    //metodo para actualizar el nombre del producto
+    @Override
+    @Transactional
+    public void updateNombreProducto(Long codigoProducto, ProductoUpdateDTO productoUpdateDTO) {
+        Producto producto = this.findProducto(codigoProducto);
+
+        if (productoUpdateDTO.getNombre() == null || productoUpdateDTO.getNombre().trim().isEmpty()) {
+            throw new EntidadInvalidaException("El nombre no puede ser nulo o vacio");
+        }
+
+        producto.setNombre(productoUpdateDTO.getNombre());
+
+        productoRepo.saveAndFlush(producto);
+    }
+
+
+    //metodo para actualizar la marca del producto
+    @Override
+    public void updateMarcaProducto(Long codigoProducto, ProductoUpdateDTO productoUpdateDTO) {
+        Producto producto = this.findProducto(codigoProducto);
+
+        if (productoUpdateDTO.getMarca() == null || productoUpdateDTO.getMarca().trim().isEmpty()) {
+            throw new EntidadInvalidaException("El marca no puede ser nula o vacio");
+        }
+
+        producto.setMarca(productoUpdateDTO.getMarca());
+
+        productoRepo.saveAndFlush(producto);
+    }
+
+    //metodo para actualizar el costo del producto
+    @Override
+    public void updateCostoProducto(Long codigoProducto, ProductoUpdateDTO productoUpdateDTO) {
+        Producto producto = this.findProducto(codigoProducto);
+
+        if (productoUpdateDTO.getCosto() == null || productoUpdateDTO.getCosto() < 0) {
+            throw new EntidadInvalidaException("El costo no puede ser nulo o negativo");
+        }
+
+        producto.setCosto(productoUpdateDTO.getCosto());
+
+        productoRepo.saveAndFlush(producto);
+
+    }
+
+    //metodo para actualizar la cantidad disponible del producto
+    @Override
+    public void updateCantidadDisponibleProducto(Long codigoProducto, ProductoUpdateDTO productoUpdateDTO) {
+        Producto producto = this.findProducto(codigoProducto);
+
+        if (productoUpdateDTO.getCantidad_disponible() == null  || productoUpdateDTO.getCantidad_disponible() < 0) {
+            throw new EntidadInvalidaException("La cantidad no puede ser nula o negativa");
+        }
+
+        producto.setCantidad_disponible(productoUpdateDTO.getCantidad_disponible());
+
+        productoRepo.saveAndFlush(producto);
+    }
+
+    //metodo para eliminar un producto
     @Override
     @Transactional
     public void deleteProducto(Long id_producto) {
@@ -89,6 +153,4 @@ public class ProductoService implements IProductoService{
 
         return faltantes;
     }
-
-
 }

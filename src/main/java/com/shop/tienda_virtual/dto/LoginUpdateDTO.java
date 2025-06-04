@@ -1,33 +1,46 @@
-package com.shop.tienda_virtual.model;
+package com.shop.tienda_virtual.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(name = "login_seq", sequenceName = "login_seq", allocationSize = 1)
+public class LoginUpdateDTO {
 
-public class Login implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "login_seq")
-    private Long id_login;
+    @Nullable
     private String nombre;
+
+    @Nullable
     private String apellido;
+
+    @Nullable
     private LocalDate fecha_nacimiento;
+
+    @Nullable
     private String email;
+
+    @Nullable
     private String telefono;
+
+    @Nullable
     private String cedula;
+
+    @Nullable
     private String direccion;
+
+    @Nullable
     private String username;
+
+    @Nullable
     private String password;
+
+    @Nullable
     private String rol;
 }

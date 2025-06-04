@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.controller;
 
+import com.shop.tienda_virtual.dto.ClienteUpdateDTO;
 import com.shop.tienda_virtual.model.Cliente;
 import com.shop.tienda_virtual.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,4 +47,23 @@ public class ClienteController {
         clienteService.updateCliente(id_cliente, cliente);
         return ResponseEntity.ok("Cliente editado con exito");
     }
+
+    @PatchMapping ("/clientes/editar/nombre/{id_cliente}")
+    public ResponseEntity<String> updateNombreCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+        clienteService.updateNombreCliente(id_cliente, clienteUpdateDTO);
+        return ResponseEntity.ok("Nombre de cliente editado con exito");
+    }
+
+    @PatchMapping ("/clientes/editar/apellido/{id_cliente}")
+    public ResponseEntity<String> updateApellido(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+        clienteService.updateApellidoCliente(id_cliente, clienteUpdateDTO);
+        return ResponseEntity.ok("Apellido de cliente editado con exito");
+    }
+
+    @PatchMapping ("/clientes/editar/cedula/{id_cliente}")
+    public ResponseEntity<String> updateCedulaCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+        clienteService.updateCedulaCliente(id_cliente, clienteUpdateDTO);
+        return ResponseEntity.ok("Cedula de cliente editado con exito");
+    }
+
 }
