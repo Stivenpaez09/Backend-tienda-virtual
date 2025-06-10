@@ -59,7 +59,9 @@ public class ProductoService implements IProductoService{
     //metodo para encontrar un producto en específico
     @Override
     public Producto findProducto(Long codigo_producto) {
-
+        if (codigo_producto == null || codigo_producto <= 0) {
+            throw new EntidadInvalidaException("El codigo de producto no puede ser nulo ni menor o igual a 0");
+        }
         return productoRepo.findById(codigo_producto).orElseThrow(() -> new EntityNotFoundException("El usuario con ID " + codigo_producto + " no existe en la base de datos"));
     }
 

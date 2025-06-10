@@ -4,7 +4,9 @@ import com.shop.tienda_virtual.dto.LoginUpdateDTO;
 import com.shop.tienda_virtual.dto.SessionLoginDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Login;
+import com.shop.tienda_virtual.model.Rol;
 import com.shop.tienda_virtual.repository.ILoginRepository;
+import com.shop.tienda_virtual.repository.IRolRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,11 +22,13 @@ public class LoginService implements ILoginService{
 
     private final ILoginRepository loginRepo;
     private final PasswordEncoder passwordEncoder;
+    private final IRolRepository rolRepo;
 
     @Autowired
-    public LoginService(ILoginRepository loginRepo, PasswordEncoder passwordEncoder) {
+    public LoginService(ILoginRepository loginRepo, PasswordEncoder passwordEncoder, IRolRepository rolRepo) {
         this.loginRepo = loginRepo;
         this.passwordEncoder = passwordEncoder;
+        this.rolRepo = rolRepo;
     }
 
     //metodo para crear un usuario de login
@@ -61,9 +65,16 @@ public class LoginService implements ILoginService{
         if (login.getPassword() == null || login.getPassword().trim().isEmpty()) {
             throw new EntidadInvalidaException("La contraseña no puede estar vaciá");
         }
-        if (login.getRol() == null || login.getRol().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El rol no puede estar vació");
+
+        if (login.getUnRol() == null) {
+            throw new EntidadInvalidaException("El rol no puede ser nulo");
         }
+
+        if (login.getUnRol().getNombre() == null || login.getUnRol().getNombre().trim().isEmpty()) {
+            throw new EntidadInvalidaException("El nombre del rol no puede ser nulo ni vacío.");
+        }
+
+        Rol rol = this.findRol(login.getUnRol().getId_rol());
 
         //encripta la contraseña
         String hashedPassword = passwordEncoder.encode(login.getPassword());
@@ -81,11 +92,27 @@ public class LoginService implements ILoginService{
     //metodo para encontrar un login en específico
     @Override
     public Login findLogin(Long id_login) {
+        if (id_login == null || id_login <= 0) {
+            throw new EntidadInvalidaException("El id_login no puede ser null ni menor o igual a 0");
+        }
         return loginRepo.findById(id_login).orElseThrow(() -> new EntityNotFoundException("El usuario con ID " + id_login + " no existe en la base de datos"));
     }
 
+    //metodo para encontrar un rol en específico
+    @Override
+    public Rol findRol(Long id_rol) {
+        if (id_rol == null || id_rol <= 0) {
+            throw new EntidadInvalidaException("El id_rl no puede ser null ni menor o igual a 0");
+        }
+        return rolRepo.findById(id_rol).orElseThrow(() -> new EntityNotFoundException("El rol con ID " + id_rol + " no existe en la base de datos"));
+    }
+
+
     //metodo para encontrar un usuario por su username
     public Login findLoginByUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new EntidadInvalidaException("El username no puede ser nulo o estar vacio.");
+        }
         return loginRepo.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("El usuario con usuario " + username + " no existe en la base de datos"));
     }
 
@@ -230,13 +257,22 @@ public class LoginService implements ILoginService{
     //metodo para editar el rol del login
     @Override
     public void updateRolLogin(Long id_login, LoginUpdateDTO loginUpdateDTO) {
-        Login login  = this.findLogin(id_login);
-
-        if (loginUpdateDTO.getRol() == null || loginUpdateDTO.getRol().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El rol no puede estar vacío");
+        if (loginUpdateDTO == null){
+            throw new NullPointerException("El objeto login no puede ser nulo.");
         }
 
-        login.setRol(loginUpdateDTO.getRol());
+        if (loginUpdateDTO.getUnRol() == null) {
+            throw new EntidadInvalidaException("El rol no puede ser nulo");
+        }
+
+        if (loginUpdateDTO.getUnRol().getNombre() == null || loginUpdateDTO.getUnRol().getNombre().trim().isEmpty()) {
+            throw new EntidadInvalidaException("El nombre del rol no puede ser nulo ni vacío.");
+        }
+
+        Login login  = this.findLogin(id_login);
+        Rol rol = this.findRol(loginUpdateDTO.getUnRol().getId_rol());
+
+        login.setUnRol(rol);
 
         loginRepo.saveAndFlush(login);
     }

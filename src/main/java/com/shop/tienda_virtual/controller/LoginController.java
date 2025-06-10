@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/logins")
 public class LoginController {
     private final LoginService loginService;
 
@@ -20,97 +21,96 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping ("/logins/crear")
+    @PostMapping
     public ResponseEntity<String> createLogin(@RequestBody Login login) {
         loginService.createLogin(login);
         return ResponseEntity.status(HttpStatus.CREATED).body("Login creado con exito");
     }
 
-    @GetMapping ("/logins")
+    @GetMapping
     public ResponseEntity<List<Login>> getLogins() {
         return ResponseEntity.ok(loginService.getLogins());
     }
 
-    @GetMapping ("/logins/{id_login}")
+    @GetMapping("/{id_login}")
     public ResponseEntity<Login> findLogin(@PathVariable ("id_login") Long id_login){
         return ResponseEntity.ok(loginService.findLogin(id_login));
     }
 
-    @DeleteMapping ("/logins/eliminar/{id_login}")
+    @DeleteMapping("/{id_login}")
     public ResponseEntity<String> deleteLogin(@PathVariable ("id_login") Long id_login){
         loginService.deleteLogin(id_login);
         return ResponseEntity.ok("Login eliminado con exito");
     }
 
-    @PutMapping ("/logins/editar/{id_login}")
+    @PutMapping("/{id_login}")
     public ResponseEntity<String> updateLogin(@RequestBody Login login, @PathVariable ("id_login") Long id_login) {
         loginService.updateLogin(login, id_login);
         return ResponseEntity.ok("Login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/nombre/{id_login}")
+    @PatchMapping("/{id_login}/nombre")
     public ResponseEntity<String> updateNombreLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateNombreLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Nombre de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/apellido/{id_login}")
+    @PatchMapping("/{id_login}/apellido")
     public ResponseEntity<String> updateApellidoLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateApellidoLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Apellido de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/fecha_nacimiento/{id_login}")
+    @PatchMapping("/{id_login}/fecha_nacimiento")
     public ResponseEntity<String> updateFechaNacimientoLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateFechaNacimientoLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Fecha de nacimiento de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/email/{id_login}")
+    @PatchMapping("/{id_login}/email")
     public ResponseEntity<String> updateEmailLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateEmailLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Email de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/telefono/{id_login}")
+    @PatchMapping("/{id_login}/telefono")
     public ResponseEntity<String> updateTelefonoLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateTelefonoLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Teléfono de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/cedula/{id_login}")
+    @PatchMapping("/{id_login}/cedula")
     public ResponseEntity<String> updateCedulaLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateCedulaLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Cédula de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/direccion/{id_login}")
+    @PatchMapping("/{id_login}/direccion")
     public ResponseEntity<String> updateDireccionLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateDireccionLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Dirección de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/username/{id_login}")
+    @PatchMapping("/{id_login}/username")
     public ResponseEntity<String> updateUsernameLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateUsernameLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Username de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/password/{id_login}")
+    @PatchMapping("/{id_login}/password")
     public ResponseEntity<String> updatePasswordLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updatePasswordLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Password de login editado con exito");
     }
 
-    @PatchMapping("/logins/editar/rol/{id_login}")
+    @PatchMapping("/{id_login}/rol")
     public ResponseEntity<String> updateRolLogin(@PathVariable ("id_login") Long id_login, @RequestBody LoginUpdateDTO loginUpdateDTO) {
         loginService.updateRolLogin(id_login, loginUpdateDTO);
         return ResponseEntity.ok("Rol de login editado con exito");
     }
 
-    @PostMapping ("/logins/iniciar-sesion")
+    @PostMapping("/iniciar-sesion")
     public ResponseEntity<String> sessionLogin(@RequestBody SessionLoginDTO sessionLoginDTO) {
         return ResponseEntity.ok(loginService.sessionLogin(sessionLoginDTO));
     }
-
 }

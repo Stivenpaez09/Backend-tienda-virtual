@@ -82,6 +82,9 @@ public class VentaService implements IVentaService{
     //metodo para encontrar una venta en especifico
     @Override
     public Venta findVenta(Long codigo_venta) {
+        if (codigo_venta == null || codigo_venta <= 0) {
+            throw new EntidadInvalidaException("El codigo_venta no puede ser nulo ni menor o igual a 0");
+        }
         return ventaRepo.findById(codigo_venta).orElseThrow(()-> new EntityNotFoundException("La venta registrada con el codigo " + codigo_venta + " no fue encontrada"));
     }
 
@@ -160,6 +163,9 @@ public class VentaService implements IVentaService{
     //metodo para encontrar un cliente
     @Override
     public Cliente findCliente(Long id_cliente) {
+        if (id_cliente == null || id_cliente <= 0) {
+            throw new EntidadInvalidaException("El id_cliente no puede ser nulo ni menor o igual a 0");
+        }
         return clienteRepo.findById(id_cliente).orElseThrow(() -> new EntityNotFoundException("El cliente con ID " + id_cliente + " no fue encontrado en la base de datos"));
     }
 
