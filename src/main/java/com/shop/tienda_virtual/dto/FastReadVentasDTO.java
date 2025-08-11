@@ -5,14 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
+import java.time.LocalDate;
+
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BiggestVentaDTO {
+public class FastReadVentasDTO {
     private Long codigo_venta;
-    private Double total;
-    private int listaProductos;
     private String nombreCliente;
-    private String apellidoCliente;
+    private String cedulaCliente;
+    private LocalDate fecha_venta;
+    private int cantidadProductos;
+    private Double total;
+
 }

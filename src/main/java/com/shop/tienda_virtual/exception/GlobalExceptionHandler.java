@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -44,4 +46,20 @@ public class GlobalExceptionHandler {
         response.put("message", "Error en el formato de fecha. Debe ser 'yyyy-MM-dd'.");
         return ResponseEntity.badRequest().body(response);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", "Error inesperado");
+        response.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
+    @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleAuthErrors(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Usuario o contraseña incorrectos");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
 }

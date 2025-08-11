@@ -4,15 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BiggestVentaDTO {
-    private Long codigo_venta;
-    private Double total;
-    private int listaProductos;
-    private String nombreCliente;
-    private String apellidoCliente;
+public class RolUpdateDTO {
+
+    @Nullable
+    private String nombre;
+
+    @Nullable
+    private String descripcion;
 }

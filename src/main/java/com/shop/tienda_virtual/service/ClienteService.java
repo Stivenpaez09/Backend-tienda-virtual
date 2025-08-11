@@ -55,6 +55,9 @@ public class ClienteService implements IClienteService{
     //metodo para encontrar un cliente en específico
     @Override
     public Cliente findCliente(Long id_cliente) {
+        if (id_cliente == null || id_cliente <= 0) {
+            throw new EntidadInvalidaException("id_cliente no puede ser null ni mayor o igual a 0");
+        }
         return clienteRepo.findById(id_cliente)
                 .orElseThrow(() -> new EntityNotFoundException("El cliente con ID " + id_cliente + " no fue encontrado en la base de datos"));
     }
@@ -89,7 +92,7 @@ public class ClienteService implements IClienteService{
     public void updateApellidoCliente(Long id_cliente, ClienteUpdateDTO clienteUpdateDTO) {
         Cliente cliente = this.findCliente(id_cliente);
 
-        if (clienteUpdateDTO.getNombre() == null || clienteUpdateDTO.getNombre().trim().isEmpty()) {
+        if (clienteUpdateDTO.getApellido() == null || clienteUpdateDTO.getApellido().trim().isEmpty()) {
             throw new EntidadInvalidaException("El nombre del cliente no puede estar vacio");
         }
 
