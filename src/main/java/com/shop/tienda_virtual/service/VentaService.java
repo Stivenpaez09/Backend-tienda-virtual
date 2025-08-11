@@ -1,6 +1,7 @@
 package com.shop.tienda_virtual.service;
 
 import com.shop.tienda_virtual.dto.BiggestVentaDTO;
+import com.shop.tienda_virtual.dto.FastReadVentasDTO;
 import com.shop.tienda_virtual.dto.VentaUpdateDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Cliente;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -38,39 +40,60 @@ public class VentaService implements IVentaService{
     @Override
     @Transactional
     public void createVenta(Venta venta) {
-        if (venta == null){
-            throw new EntidadInvalidaException("El objeto venta no puede ser nulo.");
-        }
-
-        if (venta.getFecha_venta() == null || venta.getFecha_venta().isAfter(LocalDate.now())){
-            throw new EntidadInvalidaException("La fecha de venta no puede ser futura.");
-        }
-
-        if (venta.getListaProductos() == null || venta.getListaProductos().isEmpty()){
-            throw new EntidadInvalidaException("La lista de productos no puede estar vacia.");
-        }
-
-        if (venta.getUnCliente() == null){
-            throw new EntidadInvalidaException("El objeto cliente no puede ser nulo.");
-
-        }
-        this.findCliente(venta.getUnCliente().getId_cliente());
-
-        Double total = venta.getListaProductos().stream()
-                .mapToDouble(Producto::getCosto)
-                .sum();
-
-        venta.setTotal(total);
-
-
-        venta.getListaProductos().forEach(p -> {
-            if (!this.avalaibleProductos(p.getCodigo_producto())) {
-                throw new EntidadInvalidaException("El producto " + p.getNombre() + " no esta disponible.");
+        ArrayList<Producto> listaProductos = new ArrayList<>();
+            if (venta == null) {
+                throw new EntidadInvalidaException("El objeto venta no puede ser nulo.");
             }
-        });
 
-        ventaRepo.saveAndFlush(venta);
+            if (venta.getFecha_venta() == null || venta.getFecha_venta().isAfter(LocalDate.now())) {
+                throw new EntidadInvalidaException("La fecha de venta no puede ser nula o futura.");
+            }
 
+            if (venta.getListaProductos() == null || venta.getListaProductos().isEmpty()) {
+                throw new EntidadInvalidaException("La lista de productos no puede estar vacia.");
+            }
+
+            if (venta.getUnCliente() == null) {
+                throw new EntidadInvalidaException("El objeto cliente no puede ser nulo.");
+            }
+
+            if (venta.getUnCliente().getId_cliente() == null || venta.getUnCliente().getId_cliente() < 1) {
+                throw new EntidadInvalidaException("El atributo id_cliente de unCliente no puede ser nulo menor que 1.");
+            }
+            Cliente cliente = this.findCliente(venta.getUnCliente().getId_cliente());
+
+            venta.setUnCliente(cliente);
+
+            if (venta.getListaProductos() == null || venta.getListaProductos().isEmpty()) {
+                throw new EntidadInvalidaException("La lista de productos no puede estar vacia.");
+            }
+
+            venta.getListaProductos().forEach(p -> {
+
+                if (p.getCodigo_producto() == null) {
+                    throw new EntidadInvalidaException("El codigo de producto no puede ser nulo.");
+                }
+
+                Producto producto = productoRepo.findById(p.getCodigo_producto()).orElseThrow(() -> new EntidadInvalidaException("El producto cliente no existe"));
+
+                if(producto.getCosto() == null) {
+                    throw new EntidadInvalidaException("El costo del producto no puede ser nulo.");
+                }
+
+                if (!this.avalaibleProductos(p.getCodigo_producto())) {
+                    throw new EntidadInvalidaException("El producto " + p.getNombre() + " no esta disponible.");
+                }
+
+                listaProductos.add(producto);
+            });
+
+            Double total = listaProductos.stream()
+                    .mapToDouble(Producto::getCosto)
+                    .sum();
+
+            venta.setTotal(total);
+
+            ventaRepo.saveAndFlush(venta);
     }
 
     //metodo para obtener la lista completa de ventas
@@ -130,6 +153,17 @@ public class VentaService implements IVentaService{
             throw new EntidadInvalidaException("La lista de productos no puede ser estar vacia.");
         }
 
+        ventaUpdateDTO.getListaProductos().forEach(p -> {
+            if (!this.avalaibleProductos(p.getCodigo_producto())) {
+                throw new EntidadInvalidaException("El producto " + p.getNombre() + " no esta disponible.");
+            }
+        });
+
+        Double total = ventaUpdateDTO.getListaProductos().stream()
+                .mapToDouble(Producto::getCosto)
+                .sum();
+
+        venta.setTotal(total);
         venta.setListaProductos(ventaUpdateDTO.getListaProductos());
 
         ventaRepo.saveAndFlush(venta);
@@ -237,6 +271,45 @@ public class VentaService implements IVentaService{
         biggestVentaDTO.setApellidoCliente("");
         }
         return biggestVentaDTO;
+    }
+
+    @Override
+    public List<FastReadVentasDTO> getShowVentas() {
+        List<Venta> ventas = this.getVentas();
+
+        List<FastReadVentasDTO> fastReadVentasDTO = new ArrayList<>();
+
+        if (ventas == null ){
+            throw new EntityNotFoundException("La lista no existe en la base de datos");
+        }
+        for (Venta venta : ventas) {
+
+            if (ventaInvalida(venta)) {
+                continue;
+            }
+            FastReadVentasDTO fastVenta = new FastReadVentasDTO();
+            fastVenta.setCodigo_venta(venta.getCodigo_venta());
+            fastVenta.setNombreCliente(venta.getUnCliente().getNombre() + " " +venta.getUnCliente().getApellido());
+            fastVenta.setCedulaCliente(venta.getUnCliente().getCedula());
+            fastVenta.setFecha_venta(venta.getFecha_venta());
+            fastVenta.setCantidadProductos(venta.getListaProductos().size());
+            fastVenta.setTotal(venta.getTotal());
+            fastReadVentasDTO.add(fastVenta);
+        }
+        return fastReadVentasDTO;
+    }
+
+    private boolean ventaInvalida(Venta venta) {
+        return venta == null
+                || venta.getUnCliente() == null
+                || venta.getUnCliente().getNombre() == null
+                || venta.getUnCliente().getNombre().isEmpty()
+                || venta.getUnCliente().getApellido() == null
+                || venta.getUnCliente().getApellido().isEmpty()
+                || venta.getUnCliente().getCedula() == null
+                || venta.getUnCliente().getCedula().isEmpty()
+                || venta.getListaProductos() == null
+                || venta.getTotal() == null;
     }
 
 

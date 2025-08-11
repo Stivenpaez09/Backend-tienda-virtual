@@ -1,18 +1,18 @@
 package com.shop.tienda_virtual.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @SequenceGenerator(name = "rol_seq", sequenceName = "rol_seq", allocationSize = 1)
 public class Rol implements Serializable {
 
@@ -21,4 +21,8 @@ public class Rol implements Serializable {
     private Long id_rol;
     private String nombre;
     private String descripcion;
+
+    @OneToMany (mappedBy = "unRol")
+    private List<Login> listaLogins = new ArrayList<>();
+
 }

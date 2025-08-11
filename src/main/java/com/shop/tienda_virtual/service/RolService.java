@@ -4,9 +4,11 @@ import com.shop.tienda_virtual.dto.RolUpdateDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Rol;
 import com.shop.tienda_virtual.repository.IRolRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +20,22 @@ public class RolService implements IRolService {
     @Autowired
     public RolService(IRolRepository rolRepo) {
         this.rolRepo = rolRepo;
+    }
+
+    @PostConstruct
+    private void initRol() {
+        if (this.getRoles() == null || this.getRoles().isEmpty()) {
+            rolRepo.saveAndFlush(Rol.builder()
+                            .nombre("ROLE_ADMINISTRADOR")
+                            .descripcion("Responsable de la gestión y supervisión del sistema con acceso total.")
+                            .build());
+
+            rolRepo.saveAndFlush(Rol.builder()
+                            .nombre("ROLE_ASISTENTE")
+                            .descripcion("Usuario con acceso limitado para apoyar en tareas operativas.")
+                            .build());
+
+        }
     }
 
     @Override

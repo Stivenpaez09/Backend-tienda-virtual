@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/roles")
@@ -22,42 +23,42 @@ public class RolController {
     }
 
     @PostMapping
-    public ResponseEntity<String> saveRol(@RequestBody Rol rol) {
+    public ResponseEntity<Map<String, String>> saveRol(@RequestBody Rol rol) {
         this.rolService.saveRol(rol);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Rol creado con exito");
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Rol creado con éxito"));
     }
 
     @GetMapping
-    public ResponseEntity<List<Rol>> getRoles(){
+    public ResponseEntity<List<Rol>> getRoles() {
         return ResponseEntity.ok(rolService.getRoles());
     }
 
     @GetMapping("/{id_rol}")
-    public ResponseEntity<Rol> findRol(@PathVariable("id_rol") Long id_rol){
+    public ResponseEntity<Rol> findRol(@PathVariable("id_rol") Long id_rol) {
         return ResponseEntity.ok(rolService.findRol(id_rol));
     }
 
     @PutMapping("/{id_rol}")
-    public ResponseEntity<String> updateRol(@PathVariable("id_rol") Long id_rol, @RequestBody Rol rol){
+    public ResponseEntity<Map<String, String>> updateRol(@PathVariable("id_rol") Long id_rol, @RequestBody Rol rol) {
         this.rolService.updateRol(id_rol, rol);
-        return ResponseEntity.ok("Rol actualizado con exito");
+        return ResponseEntity.ok(Map.of("message", "Rol actualizado con éxito"));
     }
 
-    @PatchMapping ("/{id_rol}/nombre")
-    public ResponseEntity<String> updateNombreRol(@PathVariable("id_rol") Long id_rol, @RequestBody RolUpdateDTO rolUpdateDTO){
+    @PatchMapping("/{id_rol}/nombre")
+    public ResponseEntity<Map<String, String>> updateNombreRol(@PathVariable("id_rol") Long id_rol, @RequestBody RolUpdateDTO rolUpdateDTO) {
         this.rolService.updateNombreRol(id_rol, rolUpdateDTO);
-        return ResponseEntity.ok("Nombre de Rol actualizado con exito");
+        return ResponseEntity.ok(Map.of("message", "Nombre de rol actualizado con éxito"));
     }
 
-    @PatchMapping ("/{id_rol}/descripcion")
-    public ResponseEntity<String> updateDescripcionRol(@PathVariable("id_rol") Long id_rol, @RequestBody RolUpdateDTO rolUpdateDTO){
+    @PatchMapping("/{id_rol}/descripcion")
+    public ResponseEntity<Map<String, String>> updateDescripcionRol(@PathVariable("id_rol") Long id_rol, @RequestBody RolUpdateDTO rolUpdateDTO) {
         this.rolService.updateDescripcionRol(id_rol, rolUpdateDTO);
-        return ResponseEntity.ok("Nombre de Rol actualizado con exito");
+        return ResponseEntity.ok(Map.of("message", "Descripción de rol actualizada con éxito"));
     }
 
     @DeleteMapping("/{id_rol}")
-    public ResponseEntity<String> deleteRol(@PathVariable("id_rol") Long id_rol){
+    public ResponseEntity<Map<String, String>> deleteRol(@PathVariable("id_rol") Long id_rol) {
         this.rolService.deleteRol(id_rol);
-        return ResponseEntity.ok("Rol eliminado con exito");
+        return ResponseEntity.ok(Map.of("message", "Rol eliminado con éxito"));
     }
 }

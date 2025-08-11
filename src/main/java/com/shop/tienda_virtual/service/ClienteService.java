@@ -92,7 +92,7 @@ public class ClienteService implements IClienteService{
     public void updateApellidoCliente(Long id_cliente, ClienteUpdateDTO clienteUpdateDTO) {
         Cliente cliente = this.findCliente(id_cliente);
 
-        if (clienteUpdateDTO.getNombre() == null || clienteUpdateDTO.getNombre().trim().isEmpty()) {
+        if (clienteUpdateDTO.getApellido() == null || clienteUpdateDTO.getApellido().trim().isEmpty()) {
             throw new EntidadInvalidaException("El nombre del cliente no puede estar vacio");
         }
 

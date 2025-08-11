@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,4 +23,6 @@ public class Producto implements Serializable {
     private String marca;
     private Double costo;
     private  Double cantidad_disponible;
+    @ManyToMany(mappedBy = "listaProductos")
+    private List<Venta> listaVentas;
 }

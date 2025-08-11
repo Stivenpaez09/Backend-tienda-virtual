@@ -22,9 +22,9 @@ public class Venta implements Serializable {
     private Long codigo_venta;
     private LocalDate fecha_venta;
     private Double total;
-    @OneToMany
+    @ManyToMany
     private List<Producto> listaProductos;
-    @OneToOne
+    @ManyToOne
     @JoinColumn (name = "id_cliente",
                  referencedColumnName = "id_cliente")
     private Cliente unCliente;

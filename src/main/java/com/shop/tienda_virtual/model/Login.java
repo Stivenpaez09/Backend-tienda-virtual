@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -28,20 +29,23 @@ public class Login implements Serializable, UserDetails {
     private String nombre;
     private String apellido;
     private LocalDate fecha_nacimiento;
-    private String email;
     private String telefono;
     private String cedula;
     private String direccion;
     private String username;
     private String password;
 
-    @OneToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "id_rol", referencedColumnName = "id_rol")
     private Rol unRol;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(unRol.getNombre()));
+        String nombreRol = (unRol == null || unRol.getNombre() == null || unRol.getNombre().trim().isEmpty())
+                ? "ROLE_ASISTENTE"
+                : unRol.getNombre();
+
+        return List.of(new SimpleGrantedAuthority(nombreRol));
     }
 
     @Override

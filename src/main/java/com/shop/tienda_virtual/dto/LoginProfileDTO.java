@@ -12,14 +12,14 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterRequestDTO {
+public class LoginProfileDTO {
+    private Long id;
     private String nombre;
     private String apellido;
-    private LocalDate fecha_nacimiento;
+    private LocalDate fechaNacimiento;
     private String telefono;
     private String cedula;
     private String direccion;
     private String username;
-    private String password;
-    private Rol unRol;
+    private String rol;
 }

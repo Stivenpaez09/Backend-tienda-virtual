@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.service;
 
+import com.shop.tienda_virtual.dto.ProductoSee;
 import com.shop.tienda_virtual.dto.ProductoUpdateDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Producto;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,14 +38,14 @@ public class ProductoService implements IProductoService{
         }
 
         if (producto.getMarca() == null || producto.getMarca().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El marca no puede ser nula o vacio");
+            throw new EntidadInvalidaException("La marca no puede ser nula o vacio");
         }
 
-        if (producto.getCosto() == null || producto.getCosto() < 0) {
+        if (producto.getCosto() == null || producto.getCosto() <= 0) {
             throw new EntidadInvalidaException("El costo no puede ser nulo o negativo");
         }
 
-        if (producto.getCantidad_disponible() == null  || producto.getCantidad_disponible() < 0) {
+        if (producto.getCantidad_disponible() == null  || producto.getCantidad_disponible() <= 0) {
             throw new EntidadInvalidaException("La cantidad no puede ser nula o negativa");
         }
 
@@ -52,8 +54,17 @@ public class ProductoService implements IProductoService{
 
     //metodo para obtener una lista de productos
     @Override
-    public List<Producto> getProductos() {
-        return productoRepo.findAll();
+    public List<ProductoSee> getProductos() {
+        List<Producto> productos = productoRepo.findAll();
+        List<ProductoSee> listaProductos = productos.stream().map(producto ->
+            new ProductoSee(producto.getCodigo_producto(),
+                    producto.getNombre(),
+                    producto.getMarca(),
+                    producto.getCosto(),
+                    producto.getCantidad_disponible())
+        ).toList();
+
+        return listaProductos;
     }
 
     //metodo para encontrar un producto en específico
@@ -98,7 +109,7 @@ public class ProductoService implements IProductoService{
         Producto producto = this.findProducto(codigoProducto);
 
         if (productoUpdateDTO.getMarca() == null || productoUpdateDTO.getMarca().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El marca no puede ser nula o vacio");
+            throw new EntidadInvalidaException("La marca no puede ser nula o vacia");
         }
 
         producto.setMarca(productoUpdateDTO.getMarca());
@@ -145,8 +156,8 @@ public class ProductoService implements IProductoService{
 
     //Metodo que busca los productos que tengan menor cantidad a 5
     @Override
-    public List<Producto> missingProductos() {
-        List<Producto> faltantes = new ArrayList<>();
+    public List<ProductoSee> getMissingProductos() {
+        List<ProductoSee> faltantes = new ArrayList<>();
         this.getProductos().forEach(producto -> {
             if (producto.getCantidad_disponible() < 5) {
                 faltantes.add(producto);

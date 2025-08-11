@@ -1,11 +1,13 @@
 package com.shop.tienda_virtual.service;
 
-import com.shop.tienda_virtual.model.Login;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.security.Key;
-import java.util.HashMap;
+import java.util.function.Function;
 
 public interface IJwtService {
-    public String getToken(UserDetails login);
-}
+    String getToken(UserDetails login);
+    String getUsernameFromToken(String token);
+    boolean isTokenValid(String token, UserDetails userDetails);
+    <T> T getClaim(String token, Function<Claims, T> claimsResolver);
+    }

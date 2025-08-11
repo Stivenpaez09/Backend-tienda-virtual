@@ -2,8 +2,6 @@ package com.shop.tienda_virtual.config;
 
 
 import com.shop.tienda_virtual.repository.ILoginRepository;
-import com.shop.tienda_virtual.service.LoginService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

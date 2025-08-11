@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.Map;
 
 @RestController
 @RequestMapping("/clientes")
@@ -23,9 +23,9 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<String> crearCliente(@RequestBody Cliente cliente) {
+    public ResponseEntity<Map<String, String>> saveCliente(@RequestBody Cliente cliente) {
         clienteService.saveCliente(cliente);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Cliente creado con exito");
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Cliente creado con éxito"));
     }
 
     @GetMapping
@@ -39,32 +39,32 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{id_cliente}")
-    public ResponseEntity<String> deleteCliente(@PathVariable("id_cliente") Long id_cliente) {
+    public ResponseEntity<Map<String, String>> deleteCliente(@PathVariable("id_cliente") Long id_cliente) {
         clienteService.deleteCliente(id_cliente);
-        return ResponseEntity.ok("Cliente eliminado con exito");
+        return ResponseEntity.ok(Map.of("message", "Cliente eliminado con éxito"));
     }
 
     @PutMapping("/{id_cliente}")
-    public ResponseEntity<String> updateCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody Cliente cliente) {
+    public ResponseEntity<Map<String, String>> updateCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody Cliente cliente) {
         clienteService.updateCliente(id_cliente, cliente);
-        return ResponseEntity.ok("Cliente editado con exito");
+        return ResponseEntity.ok(Map.of("message", "Cliente editado con éxito"));
     }
 
     @PatchMapping("/{id_cliente}/nombre")
-    public ResponseEntity<String> updateNombreCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+    public ResponseEntity<Map<String, String>> updateNombreCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
         clienteService.updateNombreCliente(id_cliente, clienteUpdateDTO);
-        return ResponseEntity.ok("Nombre de cliente editado con exito");
+        return ResponseEntity.ok(Map.of("message", "Nombre de cliente editado con éxito"));
     }
 
     @PatchMapping("/{id_cliente}/apellido")
-    public ResponseEntity<String> updateApellido(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+    public ResponseEntity<Map<String, String>> updateApellido(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
         clienteService.updateApellidoCliente(id_cliente, clienteUpdateDTO);
-        return ResponseEntity.ok("Apellido de cliente editado con exito");
+        return ResponseEntity.ok(Map.of("message", "Apellido de cliente editado con éxito"));
     }
 
     @PatchMapping("/{id_cliente}/cedula")
-    public ResponseEntity<String> updateCedulaCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
+    public ResponseEntity<Map<String, String>> updateCedulaCliente(@PathVariable("id_cliente") Long id_cliente, @RequestBody ClienteUpdateDTO clienteUpdateDTO){
         clienteService.updateCedulaCliente(id_cliente, clienteUpdateDTO);
-        return ResponseEntity.ok("Cedula de cliente editado con exito");
+        return ResponseEntity.ok(Map.of("message", "Cédula de cliente editada con éxito"));
     }
 }
