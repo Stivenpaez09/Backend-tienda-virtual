@@ -2,7 +2,6 @@ package com.shop.tienda_virtual.service;
 
 import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.dto.FastReadVentasDTO;
-import com.shop.tienda_virtual.dto.VentaUpdateDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Cliente;
 import com.shop.tienda_virtual.model.Producto;
@@ -126,64 +125,6 @@ public class VentaService implements IVentaService{
 
         this.createVenta(venta);
 
-    }
-
-    //metodo para actualizar la fecha de venta
-    @Override
-    @Transactional
-    public void updateFechaVenta(Long codigo_venta, VentaUpdateDTO ventaUpdateDTO) {
-        Venta venta = this.findVenta(codigo_venta);
-
-        if (ventaUpdateDTO.getFecha_venta() == null || ventaUpdateDTO.getFecha_venta().isAfter(LocalDate.now())){
-            throw new EntidadInvalidaException("La fecha de venta no puede ser futura.");
-        }
-
-        venta.setFecha_venta(ventaUpdateDTO.getFecha_venta());
-
-        ventaRepo.saveAndFlush(venta);
-    }
-
-    //metodo para actualizar la lista de productos
-    @Override
-    @Transactional
-    public void updateListaProductosVenta(Long codigo_venta, VentaUpdateDTO ventaUpdateDTO) {
-        Venta venta = this.findVenta(codigo_venta);
-
-        if (ventaUpdateDTO.getListaProductos() == null || ventaUpdateDTO.getListaProductos().isEmpty()){
-            throw new EntidadInvalidaException("La lista de productos no puede ser estar vacia.");
-        }
-
-        ventaUpdateDTO.getListaProductos().forEach(p -> {
-            if (!this.avalaibleProductos(p.getCodigo_producto())) {
-                throw new EntidadInvalidaException("El producto " + p.getNombre() + " no esta disponible.");
-            }
-        });
-
-        Double total = ventaUpdateDTO.getListaProductos().stream()
-                .mapToDouble(Producto::getCosto)
-                .sum();
-
-        venta.setTotal(total);
-        venta.setListaProductos(ventaUpdateDTO.getListaProductos());
-
-        ventaRepo.saveAndFlush(venta);
-    }
-
-    //metodo para actualizar el cliente
-    @Override
-    @Transactional
-    public void updateClienteVenta(Long codigo_venta, VentaUpdateDTO ventaUpdateDTO) {
-        Venta venta = this.findVenta(codigo_venta);
-
-        if (ventaUpdateDTO.getUnCliente()==null ){
-            throw new EntidadInvalidaException("El cliente no puede ser nulo.");
-        }
-
-        Cliente cliente = this.findCliente(ventaUpdateDTO.getUnCliente().getId_cliente());
-
-        venta.setUnCliente(cliente);
-
-        ventaRepo.saveAndFlush(venta);
     }
 
     //metodo para eliminar una venta
