@@ -2,7 +2,6 @@ package com.shop.tienda_virtual.controller;
 
 import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.dto.FastReadVentasDTO;
-import com.shop.tienda_virtual.dto.VentaUpdateDTO;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
 import com.shop.tienda_virtual.service.VentaService;
@@ -58,24 +57,6 @@ public class VentaController {
     public ResponseEntity<Map<String, String>> updateVenta(@PathVariable Long codigo_venta, @RequestBody Venta venta) {
         ventaService.updateVenta(codigo_venta, venta);
         return ResponseEntity.ok(Map.of("message", "Venta editada con éxito"));
-    }
-
-    @PatchMapping("/{codigo_venta}/fechaventa")
-    public ResponseEntity<Map<String, String>> updateFechaVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
-        ventaService.updateFechaVenta(codigo_venta, ventaUpdateDTO);
-        return ResponseEntity.ok(Map.of("message", "Fecha de venta editada con éxito"));
-    }
-
-    @PatchMapping("/{codigo_venta}/listaproductos")
-    public ResponseEntity<Map<String, String>> updateListaProductosVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
-        ventaService.updateListaProductosVenta(codigo_venta, ventaUpdateDTO);
-        return ResponseEntity.ok(Map.of("message", "Lista de productos editada con éxito"));
-    }
-
-    @PatchMapping("/{codigo_venta}/cliente")
-    public ResponseEntity<Map<String, String>> updateClienteVenta(@PathVariable Long codigo_venta, @RequestBody VentaUpdateDTO ventaUpdateDTO) {
-        ventaService.updateClienteVenta(codigo_venta, ventaUpdateDTO);
-        return ResponseEntity.ok(Map.of("message", "Cliente editado con éxito"));
     }
 
     @GetMapping("/{codigo_venta}/productos")

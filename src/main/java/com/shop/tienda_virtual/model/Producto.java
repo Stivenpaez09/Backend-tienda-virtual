@@ -1,5 +1,7 @@
 package com.shop.tienda_virtual.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,5 +26,6 @@ public class Producto implements Serializable {
     private Double costo;
     private  Double cantidad_disponible;
     @ManyToMany(mappedBy = "listaProductos")
+    @JsonIgnore
     private List<Venta> listaVentas;
 }
