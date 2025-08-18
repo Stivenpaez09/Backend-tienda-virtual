@@ -25,9 +25,6 @@ public class LoginUpdateDTO {
     private LocalDate fecha_nacimiento;
 
     @Nullable
-    private String email;
-
-    @Nullable
     private String telefono;
 
     @Nullable
@@ -43,5 +40,5 @@ public class LoginUpdateDTO {
     private String password;
 
     @Nullable
-    private Rol unRol;
+    private Long unRol;
 }

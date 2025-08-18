@@ -164,7 +164,7 @@ public class VentaService implements IVentaService{
         return venta.getListaProductos();
     }
 
-    //metodo para buscar las ventas por fechas
+    //metodo para buscar las ventas por fechas y obtener el total de ventas y dinero obtenido
     @Override
     public List<Object> findVentasByDate(LocalDate fecha_venta) {
 
@@ -203,6 +203,9 @@ public class VentaService implements IVentaService{
         }
         biggestVentaDTO.setCodigo_venta(venta.getCodigo_venta());
         biggestVentaDTO.setTotal(venta.getTotal());
+        if(venta.getListaProductos() == null){
+            biggestVentaDTO.setListaProductos(0);
+        }
         biggestVentaDTO.setListaProductos(venta.getListaProductos().size());
         if (venta.getUnCliente() != null){
             biggestVentaDTO.setNombreCliente(venta.getUnCliente().getNombre());

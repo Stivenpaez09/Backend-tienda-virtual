@@ -2,6 +2,7 @@ package com.shop.tienda_virtual.service;
 
 import com.shop.tienda_virtual.dto.LoginProfileDTO;
 import com.shop.tienda_virtual.dto.LoginUpdateDTO;
+import com.shop.tienda_virtual.dto.RegisterRequestDTO;
 import com.shop.tienda_virtual.exception.EntidadInvalidaException;
 import com.shop.tienda_virtual.model.Login;
 import com.shop.tienda_virtual.model.Rol;
@@ -14,8 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class LoginService implements ILoginService{
@@ -34,7 +35,7 @@ public class LoginService implements ILoginService{
     //metodo para crear un usuario de login
     @Override
     @Transactional
-    public void createLogin(Login login) {
+    public void createLogin(RegisterRequestDTO login) {
         if (login == null) {
             throw new EntidadInvalidaException("El login no puede estar vació");
         }
@@ -72,44 +73,46 @@ public class LoginService implements ILoginService{
             throw new EntidadInvalidaException("El rol no puede ser nulo");
         }
 
-        Rol rol = this.findRol(login.getUnRol().getId_rol());
-        login.setUnRol(rol);
-        rol.getListaLogins().add(login);
+        Rol rol = this.findRol(login.getUnRol());
 
-        //encripta la contraseña
-        String hashedPassword = passwordEncoder.encode(login.getPassword());
-        login.setPassword(hashedPassword);
+        Login userLogin = Login.builder()
+                .nombre(login.getNombre())
+                .apellido(login.getApellido())
+                .fecha_nacimiento(login.getFecha_nacimiento())
+                .telefono(login.getTelefono())
+                .cedula(login.getCedula())
+                .direccion(login.getDireccion())
+                .username(login.getUsername())
+                .password(passwordEncoder.encode(login.getPassword()))
+                .unRol(rol)
+                .build();
 
-        loginRepo.saveAndFlush(login);
+        rol.getListaLogins().add(userLogin);
+        loginRepo.saveAndFlush(userLogin);
 
     }
 
     //metodo para conseguir la lista de logins
     @Override
-    public List<Login> getLogins() {
-        return loginRepo.findAll();
+    public List<LoginProfileDTO> getLogins() {
+         ArrayList<LoginProfileDTO> listaLogins = new ArrayList<>();
+        loginRepo.findAll().forEach(login -> {
+                    LoginProfileDTO loginProfileDTO = this.createLoginProfile(login);
+                    listaLogins.add(loginProfileDTO);
+                }
+        );
+
+        return listaLogins;
     }
+
+
 
     //metodo para encontrar un perfil de usuario
     @Override
     public LoginProfileDTO getLoginProfile(String username) {
         Login login = this.findLoginByUsername(username);
 
-        LoginProfileDTO loginProfileDTO = new LoginProfileDTO();
-        loginProfileDTO.setNombre(login.getNombre());
-        loginProfileDTO.setApellido(login.getApellido());
-        loginProfileDTO.setFechaNacimiento(login.getFecha_nacimiento());
-        loginProfileDTO.setTelefono(login.getTelefono());
-        loginProfileDTO.setCedula(login.getCedula());
-        loginProfileDTO.setDireccion(login.getDireccion());
-        loginProfileDTO.setUsername(login.getUsername());
-        if (login.getUnRol() != null && login.getUnRol().getId_rol() == 1L) {
-            loginProfileDTO.setRol("ADMINISTRADOR");
-        } else {
-            loginProfileDTO.setRol("ASISTENTE");
-        }
-
-        return loginProfileDTO;
+        return this.createLoginProfile(login);
     }
 
     //metodo para encontrar un login en específico
@@ -119,6 +122,12 @@ public class LoginService implements ILoginService{
             throw new EntidadInvalidaException("El id_login no puede ser null ni menor o igual a 0");
         }
         return loginRepo.findById(id_login).orElseThrow(() -> new EntityNotFoundException("El usuario con ID " + id_login + " no existe en la base de datos"));
+    }
+
+    @Override
+    public LoginProfileDTO findShowLogin(Long id_login) {
+        Login login = this.findLogin(id_login);
+        return this.createLoginProfile(login);
     }
 
     //metodo para encontrar un rol en específico
@@ -137,17 +146,6 @@ public class LoginService implements ILoginService{
             throw new EntidadInvalidaException("El username no puede ser nulo o estar vacio.");
         }
         return loginRepo.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("El usuario " + username + " no existe en la base de datos"));
-    }
-
-    //metodo para actualizar un login completo
-    @Override
-    @Transactional
-    public void updateLogin(Login login, Long id_login) {
-        this.findLogin(id_login);
-        if (!Objects.equals(login.getId_login(), id_login)) {
-            throw new EntidadInvalidaException("El cliente con ID " + id_login + " no se puede editar porque su ID no coincide con " + login.getId_login() + ".");
-        }
-        this.createLogin(login);
     }
 
     //metodo para editar el nombre del login
@@ -233,20 +231,6 @@ public class LoginService implements ILoginService{
         loginRepo.saveAndFlush(login);
     }
 
-    //metodo para editar el username del login
-    @Override
-    public void updateUsernameLogin(Long id_login, LoginUpdateDTO loginUpdateDTO) {
-        Login login  = this.findLogin(id_login);
-
-        if (loginUpdateDTO.getUsername() == null || loginUpdateDTO.getUsername().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El usuario no puede estar vacío");
-        }
-
-        login.setUsername(loginUpdateDTO.getUsername());
-
-        loginRepo.saveAndFlush(login);
-    }
-
     //metodo para editar el password del login
     @Override
     public void updatePasswordLogin(Long id_login, LoginUpdateDTO loginUpdateDTO) {
@@ -274,12 +258,8 @@ public class LoginService implements ILoginService{
             throw new EntidadInvalidaException("El rol no puede ser nulo");
         }
 
-        if (loginUpdateDTO.getUnRol().getNombre() == null || loginUpdateDTO.getUnRol().getNombre().trim().isEmpty()) {
-            throw new EntidadInvalidaException("El nombre del rol no puede ser nulo ni vacío.");
-        }
-
         Login login  = this.findLogin(id_login);
-        Rol rol = this.findRol(loginUpdateDTO.getUnRol().getId_rol());
+        Rol rol = this.findRol(loginUpdateDTO.getUnRol());
 
         login.setUnRol(rol);
 
@@ -292,6 +272,61 @@ public class LoginService implements ILoginService{
     public void deleteLogin(Long id_login) {
         this.findLogin(id_login);
         loginRepo.deleteById(id_login);
+    }
+
+    //Metodo que convierte un login en un elemento de tipo LoginProfileDTO
+    private LoginProfileDTO createLoginProfile(Login login) {
+        LoginProfileDTO loginProfileDTO = new LoginProfileDTO();
+
+        if(login.getNombre() == null) {
+            loginProfileDTO.setNombre("");
+        }
+
+        if(login.getApellido() == null) {
+            loginProfileDTO.setApellido("");
+        }
+
+        if(login.getFecha_nacimiento() == null) {
+            loginProfileDTO.setFechaNacimiento(LocalDate.now());
+        }
+
+        if(login.getTelefono() == null) {
+            loginProfileDTO.setTelefono("");
+        }
+
+        if(login.getCedula() == null) {
+            loginProfileDTO.setCedula("");
+        }
+
+
+        if(login.getDireccion() == null) {
+            loginProfileDTO.setDireccion("");
+        }
+
+        if(login.getUsername() == null) {
+            throw new NullPointerException("El username no puede ser nulo");
+        }
+
+        if(login.getUnRol() == null) {
+            throw new NullPointerException("El Rol no puede ser nulo");
+        }
+
+        if(login.getUnRol().getNombre() == null) {
+            throw new NullPointerException("El nombre del rol no puede ser nulo");
+        }
+
+
+        loginProfileDTO.setId(login.getId_login());
+        loginProfileDTO.setNombre(login.getNombre());
+        loginProfileDTO.setApellido(login.getApellido());
+        loginProfileDTO.setFechaNacimiento(login.getFecha_nacimiento());
+        loginProfileDTO.setTelefono(login.getTelefono());
+        loginProfileDTO.setCedula(login.getCedula());
+        loginProfileDTO.setDireccion(login.getDireccion());
+        loginProfileDTO.setUsername(login.getUsername());
+        loginProfileDTO.setRol(login.getUnRol().getNombre());
+
+        return loginProfileDTO;
     }
 
 

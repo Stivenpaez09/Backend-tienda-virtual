@@ -21,5 +21,5 @@ public class RegisterRequestDTO {
     private String direccion;
     private String username;
     private String password;
-    private Rol unRol;
+    private Long unRol;
 }

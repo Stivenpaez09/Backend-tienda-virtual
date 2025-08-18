@@ -37,24 +37,12 @@ public class AuthService {
     }
 
     //este medodo procesará el registro de un usuario
-    public AuthResponseDTO register(RegisterRequestDTO request) {
-        Login login = Login.builder()
-                .nombre(request.getNombre())
-                .apellido(request.getApellido())
-                .fecha_nacimiento(request.getFecha_nacimiento())
-                .telefono(request.getTelefono())
-                .cedula(request.getCedula())
-                .direccion(request.getDireccion())
-                .username(request.getUsername())
-                .password(request.getPassword())
-                .unRol(request.getUnRol())
-                .build();
-
+    public AuthResponseDTO register(RegisterRequestDTO login) {
         //se lo paso al revice de login para que valide y cree el usuario
         this.loginService.createLogin(login);
 
         //Devuelve el token justo después de registrarse
-        UserDetails userDetails = loginService.findLoginByUsername(request.getUsername());
+        UserDetails userDetails = loginService.findLoginByUsername(login.getUsername());
         return new AuthResponseDTO(jwtService.getToken(userDetails));
     }
 }

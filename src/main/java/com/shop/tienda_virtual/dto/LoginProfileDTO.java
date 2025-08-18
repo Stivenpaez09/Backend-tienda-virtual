@@ -1,6 +1,5 @@
 package com.shop.tienda_virtual.dto;
 
-import com.shop.tienda_virtual.model.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
