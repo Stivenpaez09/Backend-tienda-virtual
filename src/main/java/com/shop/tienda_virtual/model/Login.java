@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,6 +38,7 @@ public class Login implements Serializable, UserDetails {
 
     @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn (name = "id_rol", referencedColumnName = "id_rol")
+    @JsonBackReference
     private Rol unRol;
 
     @Override

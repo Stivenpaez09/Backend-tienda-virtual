@@ -1,5 +1,6 @@
 package com.shop.tienda_virtual.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Rol implements Serializable {
     private String descripcion;
 
     @OneToMany (mappedBy = "unRol")
+    @JsonManagedReference
     private List<Login> listaLogins = new ArrayList<>();
 
 }

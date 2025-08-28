@@ -33,9 +33,6 @@ public class LoginUpdateDTO {
     private String direccion;
 
     @Nullable
-    private String username;
-
-    @Nullable
     private String password;
 
     @Nullable

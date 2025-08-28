@@ -315,6 +315,8 @@ public class LoginService implements ILoginService{
             throw new NullPointerException("El nombre del rol no puede ser nulo");
         }
 
+        String unRol = login.getUnRol().getNombre().substring(5).toLowerCase();
+
 
         loginProfileDTO.setId(login.getId_login());
         loginProfileDTO.setNombre(login.getNombre());
@@ -324,7 +326,7 @@ public class LoginService implements ILoginService{
         loginProfileDTO.setCedula(login.getCedula());
         loginProfileDTO.setDireccion(login.getDireccion());
         loginProfileDTO.setUsername(login.getUsername());
-        loginProfileDTO.setRol(login.getUnRol().getNombre());
+        loginProfileDTO.setRol(unRol);
 
         return loginProfileDTO;
     }
