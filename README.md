@@ -70,7 +70,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
 Clonar el repositorio y ejecutar:
 
 - Clonar el repositorio
-git clone https://github.com/tuusuario/backend-inventario.git
+git clone https://github.com/Stivenpaez09/Backend-tienda-virtual.git
 
 - Entrar en el proyecto
 cd backend-inventario
