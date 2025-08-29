@@ -1,4 +1,4 @@
-###BACKEND - Sistema de inventario (API REST)
+#BACKEND - Sistema de inventario (API REST)
 
 Este proyecto es el backend del sistema de inventario y ventas desarrollado con Java y Spring Boot.  
 Está construido bajo una arquitectura multicapa que garantiza escalabilidad, seguridad y mantenimiento a largo plazo.  
