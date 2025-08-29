@@ -4,12 +4,13 @@ import com.shop.tienda_virtual.dto.BiggestVentaDTO;
 import com.shop.tienda_virtual.dto.FastReadVentasDTO;
 import com.shop.tienda_virtual.model.Producto;
 import com.shop.tienda_virtual.model.Venta;
+import com.shop.tienda_virtual.service.VentaReportService;
 import com.shop.tienda_virtual.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,12 @@ import java.util.Map;
 public class VentaController {
 
     private final VentaService ventaService;
+    private final VentaReportService ventaReportService;
 
     @Autowired
-    public VentaController(VentaService ventaService) {
+    public VentaController(VentaService ventaService, VentaReportService ventaReportService) {
         this.ventaService = ventaService;
+        this.ventaReportService = ventaReportService;
     }
 
     @PostMapping
@@ -82,5 +85,21 @@ public class VentaController {
     @GetMapping("/mayorventa")
     public ResponseEntity<BiggestVentaDTO> findBiggestVenta() {
         return ResponseEntity.ok(ventaService.findBiggestVenta());
+    }
+
+    @GetMapping("/generarpdf")
+    public ResponseEntity<byte[]> generateReportVentas(){
+        byte[] pdfBytes = ventaReportService.generateReportVentas();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        ContentDisposition cd = ContentDisposition.builder("attachment")
+                .filename("reporte_ventas.pdf", StandardCharsets.UTF_8)
+                .build();
+        headers.setContentDisposition(cd);
+
+        headers.setContentLength(pdfBytes.length);
+        headers.setCacheControl(CacheControl.noCache().mustRevalidate());
+
+        return ResponseEntity.ok().headers(headers).body(pdfBytes);
     }
 }
